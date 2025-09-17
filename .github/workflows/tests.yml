@@ -19,7 +19,7 @@ jobs:
           - macos-13  # macos-13 (Intel)
           - macos-latest  # macos-14 (M1)
           - windows-latest  # windows-2022
-        python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy-3.7, pypy-3.8, pypy-3.9, pypy-3.10, pypy-3.11]
+        python-version: [3.7, 3.8, 3.9, '3.10', 3.11, 3.12, 3.13, 3.14, pypy-3.7, pypy-3.8, pypy-3.9, pypy-3.10, pypy-3.11]
         include:
           - platform: ubuntu-22.04
             python-version: 3.7
@@ -36,9 +36,9 @@ jobs:
           - platform: windows-latest
             python-version: pypy-3.9
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       if: ${{ startsWith(matrix.python-version, 'pypy-') }}
       # Using actions/checkout@v2 or later with pypy causes an error
       # https://foss.heptapod.net/pypy/pypy/-/issues/3640
@@ -46,9 +46,10 @@ jobs:
       # listdir('/home/runner/work/tox-gh-actions/tox-gh-actions/.tox/dist/
       # warnings.warn(f\'"{wd.path}" is shallow and may cause errors\')',)
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: tr
     - name: Install dependencies
       run: |
         python -m pip install --upgrade setuptools pip wheel
