@@ -34,7 +34,9 @@ jobs:
       - build
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
-    environment: pypi
+    environment:
+      name: pypi
+      url: https://pypi.org/p/tox-gh-actions
     permissions:
       id-token: write # Required for using pypa/gh-actions-pypi-publish
     steps:
