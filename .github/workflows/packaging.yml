@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: 3.13
     - name: Install dependencies
@@ -39,12 +39,12 @@ jobs:
       id-token: write # Required for using pypa/gh-actions-pypi-publish
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: tox-gh-actions-dist
           path: dist
       - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
 
   github-release:
     needs:
@@ -56,7 +56,7 @@ jobs:
       contents: write # Required for uploading artifacts to GitHub release
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: tox-gh-actions-dist
           path: dist
