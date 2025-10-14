@@ -39,11 +39,10 @@ When running tox on GitHub Actions, tox-gh-actions
 
 ## Examples
 ### Basic Example
-The following configuration will create 4 jobs when running the workflow on GitHub Actions.
-- On Python 3.7 job, tox runs `py37` environment
-- On Python 3.8 job, tox runs `py38` environment
-- On Python 3.9 job, tox runs `py39` environment
-- On Python 3.10 job, tox runs `py310` and `mypy` environments
+The following configuration will create 3 jobs when running the workflow on GitHub Actions.
+- On Python 3.10 job, tox runs `py310` environment
+- On Python 3.12 job, tox runs `py312` environment
+- On Python 3.14 job, tox runs `py314` and `mypy` environments
 
 #### tox-gh-actions Configuration
 Add `[gh-actions]` section to the same file as tox's configuration.
@@ -51,14 +50,13 @@ Add `[gh-actions]` section to the same file as tox's configuration.
 If you're using `tox.ini`:
 ```ini
 [tox]
-envlist = py37, py38, py39, py310, mypy
+envlist = py310, py312, py314, mypy
 
 [gh-actions]
 python =
-    3.7: py37
-    3.8: py38
-    3.9: py39
-    3.10: py310, mypy
+    3.10: py310
+    3.12: py312
+    3.14: py314, mypy
 
 [testenv]
 ...
@@ -67,14 +65,13 @@ python =
 If you're using `setup.cfg`:
 ```ini
 [tox:tox]
-envlist = py37, py38, py39, py310, mypy
+envlist = py310, py312, py314, mypy
 
 [gh-actions]
 python =
-    3.7: py37
-    3.8: py38
-    3.9: py39
-    3.10: py310, mypy
+    3.10: py310
+    3.12: py312
+    3.14: py314, mypy
 
 [testenv]
 ...
@@ -85,14 +82,13 @@ If you're using `pyproject.toml`:
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py37, py38, py39, py310, mypy
+envlist = py310, py312, py314, mypy
 
 [gh-actions]
 python =
-    3.7: py37
-    3.8: py38
-    3.9: py39
-    3.10: py310, mypy
+    3.10: py310
+    3.12: py312
+    3.14: py314, mypy
 
 [testenv]
 """
@@ -112,12 +108,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.10', '3.12', '3.14']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -131,18 +127,18 @@ jobs:
 ### Advanced Examples
 #### Factor-Conditional Settings: Python Version
 The following configuration will create 2 jobs when running the workflow on GitHub Actions.
-- On Python 3.7 job, tox runs `py37-django22` and `py37-django32` environments
-- On Python 3.8 job, tox runs `py38-django32` environment
+- On Python 3.12 job, tox runs `py12-django42` environment
+- On Python 3.13 job, tox runs `py313-django42`  and `py313-django52` environments
 
 `tox.ini`:
 ```ini
 [tox]
-envlist = py37-django{22,32}, py38-django32
+envlist = py312-django42, py313-django{42,52}
 
 [gh-actions]
 python =
-    3.7: py37
-    3.8: py38
+    3.12: py312
+    3.13: py313
 
 [testenv]
 ...
@@ -157,7 +153,7 @@ jobs:
   build:
     strategy:
       matrix:
-        python-version: [3.9, 3.10.0-beta.3]
+        python-version: [3.14, 3.15.0-beta.3]
 ...
 ```
 
@@ -168,11 +164,11 @@ envlist = py39, py310
 
 [gh-actions]
 python =
-    3.9: py39
-    3.10: py310
+    3.14: py314
+    3.15: py315
     # The following won't work
-    # 3.10-beta.3: py310
-    # 3.10-dev: py310
+    # 3.15-beta.3: py315
+    # 3.15-dev: py315
 
 [testenv]
 ...
@@ -184,13 +180,13 @@ Support of Pyston is experimental and not tested by our CI.
  `tox.ini`:
 ```ini
 [tox]
-envlist = py37, py38, pypy3, pyston38
+envlist = py313, py314, pypy3, pyston38
 
 [gh-actions]
 python =
-    3.7: py37
-    3.8: py38, mypy
-    pypy-3.7: pypy3
+    3.13: py313
+    3.14: py314, mypy
+    pypy-3.11: pypy3
     pyston-3.8: pyston38
 
 [testenv]
@@ -217,8 +213,8 @@ python =
 ```
 
 If there are multiple matching Python versions in the configuration, only the most precise one is used.
-For example, if you are running CPython 3.8 and `gh-actions.python` has both `3` and `3.8`,
-tox-gh-actions gets factors only from the key `3.8`.
+For example, if you are running CPython 3.14 and `gh-actions.python` has both `3` and `3.14`,
+tox-gh-actions gets factors only from the key `3.14`.
 
 _Changed in 3.0_: `pypy3` is not supported in the configuration anymore. Please use `pypy-3` instead.
 
@@ -226,8 +222,8 @@ _Changed in 3.0_: `pypy3` is not supported in the configuration anymore. Please 
 You can also use environment variable to decide which environment to run.
 The following is an example to install different dependency based on platform.
 It will create 9 jobs when running the workflow on GitHub Actions.
-- On Python 3.8/ubuntu-latest job, tox runs `py38-linux` environment
-- On Python 3.9/ubuntu-latest job, tox runs `py39-linux` environment
+- On Python 3.10/ubuntu-latest job, tox runs `py310-linux` environment
+- On Python 3.12/ubuntu-latest job, tox runs `py312-linux` environment
 - and so on.
 
 `.github/workflows/<workflow>.yml`:
@@ -244,12 +240,12 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.10', '3.12', '3.14']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -265,13 +261,13 @@ jobs:
 `tox.ini`:
 ```ini
 [tox]
-envlist = py{38,39,310}-{linux,macos,windows}
+envlist = py{310,312,314}-{linux,macos,windows}
 
 [gh-actions]
 python =
-    3.8: py38
-    3.9: py39
     3.10: py310
+    3.12: py312
+    3.14: py3114
 
 [gh-actions:env]
 PLATFORM =

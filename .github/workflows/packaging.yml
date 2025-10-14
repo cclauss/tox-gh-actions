@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
@@ -34,11 +34,13 @@ jobs:
       - build
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
-    environment: pypi
+    environment:
+      name: pypi
+      url: https://pypi.org/p/tox-gh-actions
     permissions:
       id-token: write # Required for using pypa/gh-actions-pypi-publish
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
         with:
           name: tox-gh-actions-dist
@@ -55,7 +57,7 @@ jobs:
     permissions:
       contents: write # Required for uploading artifacts to GitHub release
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
         with:
           name: tox-gh-actions-dist
